@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
 project(remote_test)
 
-set(CMAKE_C_STANDARD 11)
-add_executable(remote_test data_structure/static_hash.c)
-#add_subdirectory(ddl)
+set(CMAKE_CXX_STANDARD 11)
+add_executable(remote_test system/codeforces.cpp)
