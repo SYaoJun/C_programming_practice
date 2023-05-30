@@ -1,332 +1,340 @@
-//#include <iostream>
-//#include <cmath>
-//#include <cstring>
-//#include <unordered_map>
-//#include <unordered_set>
-//#include <vector>
-//#include <set>
-//using namespace  std;
-//
-//int main(){
-//    puts("hello");
-//}
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#define  N  100  //数组长度
+#define M 2000
+#define N 128
+#define filename "student.txt"
+struct stu{
+    char name[N];
+    int id;
+    double amount;
+    char kind[N];
+    char date[N];
+};
 
-//定义结构体类型，存放登录信息
-struct  User
-{
-    char name[20];   //用户名称
-    char code[20];   //用户密码
-} user;
-
-//定义结构体类型，存放学生数据
-typedef struct
-{
-    int    num;
-    char   name[10];
-    float  score;
-} Student; //类型名称
-
-//调用在前，定义在后，函数声明
-void Read(Student     *s, int *n);   //从文件读取数据
-void Save(Student     *s, int n);    //数据保存到文件
-void menu(Student     *s, int *n);   //显示主控菜单
-void Display(Student  *s, int n);    //显示学生数据
-void Append(Student   *s, int *n);   //追加学生数据
-void Search(Student   *s, int n);    //查找学生
-void Delete(Student   *s, int *n);   //删除学生
-void Modify(Student   *s, int n);    //修改学生数据
-void Census(Student   *s, int n);    //统计成绩
-void SortBynum(Student   *s, int n);    //按照学号排序
-void SortByscore(Student *s, int n);    //按照分数排序
-void SortByname(Student  *s, int n);    //按照姓名排序
-void entry(FILE  *fp);  //用户登录
-void enroll(FILE *fp);  //用户注册
-void Login();           //调用注册和登录函数
-
-int main()
-{
-    int  n;          //记录实际学生人数
-    Student s[N];    //定义数组，存放学生数据，N为数组长度
-//    Login();         //登录系统
-//    Read(s, &n);     //读取文件，统计学生人数
-    menu(s, &n);     //主控菜单，实现追加、查找、修改、删除、排序等功能
-//    Save(s,  n);     //保存数据，返回menu函数，自动保存数据
-    return 0;
+typedef struct stu Student;
+Student T[M];
+int total_num = 0;
+static int n = 0;
+void menu() {
+    printf("==================学生消费系统==============\n");
+    printf("1.录入学生信息                              \n");
+    printf("2.输出学生信息                              \n");
+    printf("3.查询学生信息                              \n");
+    printf("4.删除学生信息                              \n");
+    printf("5.修改学生信息                              \n");
+    printf("6.排序学生信息                              \n");
+    printf("7.统计学生信息                              \n");
+    printf("8.保存学生信息                              \n");
+    printf("9.读取学生信息                              \n");
+    printf("0.退出                                     \n");
+    printf("==========================================\n");
+    printf("请选择(0-9):");
 }
+void add(){
+    while(1){
+        puts("开始录入信息");
+        Student t;
+        puts("请输入姓名:");
+        scanf("%s", t.name);
+        puts("请输入学号:");
+        scanf("%d", &t.id);
+        puts("请输入消费金额:");
+        scanf("%lf", &t.amount);
+        puts("请输入消费用途:");
+        scanf("%s", t.kind);
+        puts("请输入消费日期:");
+        scanf("%s", t.date);
 
-void menu(Student *s, int  *n )//菜单
-{
-    int choice;
-    while (1)
-    {        printf("\n\t\t          学生成绩管理系统");
-        printf("\n\t\t**********************************");
-        printf("\n\t\t*        1-----显示数据          *");
-        printf("\n\t\t*        2-----追加学生          *");
-        printf("\n\t\t*        3-----查找学生          *");
-        printf("\n\t\t*        4-----删除学生          *");
-        printf("\n\t\t*        5-----修改数据          *");
-        printf("\n\t\t*        6-----统计成绩          *");
-        printf("\n\t\t*        7-----按照学号排序      *");
-        printf("\n\t\t*        8-----按照成绩排序      *");
-        printf("\n\t\t*        9-----按照姓名排序      *");
-        printf("\n\t\t*        0-----保存结束          *");
-        printf("\n\t\t**********************************");
-        printf("\n\t\t         选择菜单序号(0--9):");
-        scanf("%d", &choice);
-        switch (choice)
-        {        case 1:
-                Display(s,  *n);
-                break;
-            case 2:
-                Append(s,   n);
-                Display(s,  *n);
-                break;
-            case 3:
-                Search(s,   *n);
-                break;
-            case 4:
-                Delete(s, n);
-                Display(s, *n);
-                break;
-            case 5:
-                Modify(s,  *n);
-                break;
-            case 6:
-                Census(s, *n);
-                break;
-            case 7:
-                SortBynum(s, *n);
-                Display(s,  *n);
-                break;
-            case 8:
-                SortByscore(s, *n);
-                Display(s,  *n);
-                break;
-            case 9:
-                SortByname(s, *n);
-                Display(s,  *n);
-                break;
-            case 0:
-                return;    //返回main函数，执行保存操作
-            default:
-                printf("\n\t\t选择错误,再次选择!\n");
-        }//switch
-    }//while
-}//menu
-
-void Read(Student *s, int *n) //读取数据
-{        int i = 0;
-    FILE *fp = fopen("student.txt", "ab+");
-    fread(&s[i], sizeof(Student), 1, fp);
-    while (!feof(fp))
-    {        i = i + 1;
-        fread(&s[i], sizeof(Student), 1, fp);
+        // 判重
+        for(int i = 0; i < total_num; i++) {
+            if(T[i].id == t.id){
+                puts("添加失败，已存在相同学号。");
+                return;
+            }
+        }
+        T[total_num++] = t;
+        puts("新增成功");
+        puts("********");
+        puts("1. 继续添加");
+        puts("2. 退出");
+        puts("********");
+        int x;
+        scanf("%d", &x);
+        if(x == 2) break;
     }
-    *n = i;
-    fclose(fp);
 }
-
-void Save(Student *s, int n)  //保存数据
-{        int i;
-    FILE *fp = fopen("student.txt", "wb");
-    for (i = 0; i < n; i++)
-        fwrite(&s[i], sizeof(Student), 1, fp);
-    fclose(fp);
-}
-
-void Display(Student s[], int n) //显示数据
-{        int i;
-    printf("学号\t\t姓名\t\t成绩\n");
-    for (i = 0;  i < n; i++)
-    {        printf("%d\t\t",  s[i].num);
-        printf("%s\t\t",  s[i].name);
-        printf("%5.2f\n", s[i].score);
+void output() {
+    puts("姓名\t学号\t消费金额\t消费用途\t消费日期");
+    for(int i = 0; i < total_num; i++) {
+        printf("%s\t%d\t%lf\t%s\t%s\n",
+               T[i].name, T[i].id, T[i].amount, T[i].kind, T[i].date);
     }
 }
 
-void Append(Student *s, int *n) //追加学生
-{
-    Student t;
-    printf("输入学号:");
-    scanf("%d", &t.num);
-    printf("输入姓名:");
-    scanf("%s", t.name);
-    printf("输入分数:");
-    scanf("%f", &t.score);
-    s[*n] = t; //尾部追加
-    *n++;   //学生人数加1
-}
-
-void Search(Student *s, int n) //查找
-{        int i, num;
-    printf("输入学号:");
-    scanf("%d", &num);
-    for (i = 0;  i < n;  i++ )
-        if (s[i].num == num )
-        {        printf("%d\t",    s[i].num);
-            printf("%s\t",    s[i].name);
-            printf("%5.2f\n", s[i].score);
-            return;
+void part_modify(){
+    puts("*******************");
+    puts("1. 修改姓名");
+    puts("2. 修改消费金额");
+    puts("3. 修改消费用途");
+    puts("4. 修改消费消费日期");
+    puts("*******************");
+    int x;
+    scanf("%d", &x);
+    puts("请输入学号:");
+    int id;
+    scanf("%d", &id);
+    int state = -1;
+    for(int i = 0; i < total_num; i++) {
+        if(T[i].id == id){
+            state = i;
+            break;
         }
-    printf("该学生不存在!\n");
-}
-
-void Delete(Student *s, int  *n) //删除一个学生
-{        int  num, i, k;
-    printf("输入学号:");
-    scanf("%d", &num);
-    for (i = 0;  i < *n;  i++ )
-        if (s[i].num == num ) //如果找到
-        {
-            for (k = i;  k + 1 < *n;  k++)
-                s[k] = s[k+1];    //依次左移
-            *n--;           //学生人数减1
-
-            return;
-        }
-    printf("该学生不存在!\n");
-}
-
-void Modify(Student *s, int n) //修改数据
-{        int i, num;
-    printf("输入学号:");
-    scanf("%d", &num);
-    for (i = 0;  i < n;  i++ )
-        if ( s[i].num == num )
-        {
-            printf("%s\t",   s[i].name);
-            scanf("%s", s[i].name);
-            printf("%5.2f\t", s[i].score);
-            scanf("%f", &s[i].score);
-            return;
-        }
-    printf("该学生不存在!\n");
-}
-
-void Census(Student *s, int n) //统计成绩
-{
-    int i;
-    float max, min, sum;
-    max = min = sum = s[0].score;
-    for (i = 1;  i < n; i++)
-    {
-        sum ++;
-        if (s[i].score > max)
-            max = s[i].score;
-        else if (s[i].score < min)
-            min = s[i].score;
-
     }
-    printf("max=%5.2f min=%5.2f av=%5.2f\n", max, min, sum / n);
+    if(state == -1){
+        puts("学号不存在，修改失败！");
+    }
+    if(x == 1){
+        puts("请输入修改后的姓名:");
+        scanf("%s", T[state].name);
+        puts("修改成功!");
+    }else if(x == 2){
+        puts("请输入修改后的消费金额:");
+        scanf("%lf", &T[state].amount);
+        puts("修改成功!");
+    }else if(x == 3){
+        puts("请输入修改后的消费用途:");
+        scanf("%s", T[state].kind);
+    }else if(x == 4){
+        puts("请输入修改后的消费日期:");
+        scanf("%s", T[state].date);
+        puts("修改成功!");
+    }
 }
-
-void SortBynum(Student *s, int n)
-{        //按照学号升序排列
-    int i, j;
-    Student t;
-    for (i = 1;  i < n;  i++)        //n个学生，n-1趟排序
-        for (j = 0;   j < n - i;   j++)
-            if (s[j].num > s[j + 1].num )
-            {
-                t = s[j];
-                s[j] = s[j + 1];
-                s[j + 1] = t;
+void modify(){
+    puts("*******************");
+    puts("1. 全部修改");
+    puts("2. 部分修改");
+    puts("*******************");
+    int t;
+    scanf("%d", &t);
+    if(t == 2){
+        part_modify();
+    }else if(t == 1) {
+        puts("请输入要修改的学号:");
+        Student t;
+        scanf("%d", &t.id);
+        for(int i = 0; i < total_num; i++) {
+            if(T[i].id == t.id) {
+                puts("请输入修改后的姓名:");
+                scanf("%s", T[i].name);
+                puts("请输入修改后的消费金额:");
+                scanf("%lf", &T[i].amount);
+                puts("请输入修改后的消费用途:");
+                scanf("%s", T[i].kind);
+                puts("请输入修改后的消费日期:");
+                scanf("%s", T[i].date);
+                puts("修改成功!");
+                return;
             }
+        }
+        puts("修改失败，学号不存在！");
+    }
 }
+void query() {
+    puts("*******************");
+    puts("1. 按照学号查询");
+    puts("2. 按照姓名查询");
+    puts("3. 按照消费用途查询");
+    puts("*******************");
+    int t;
+    scanf("%d", &t);
 
-void SortByscore(Student *s, int n)
-{        //按照成绩升序排列
-    int i, j;
-    Student t;
-    for (i = 1;  i < n;  i++)        //n个学生，n-1趟排序
-        for (j = 0;   j < n - i;   j++)
-            if (s[j].score > s[j + 1].score )
-            {
-                t = s[j];
-                s[j] = s[j + 1];
-                s[j + 1] = t;
+    if(t == 1) {
+        puts("请输入学号");
+        int id;
+        scanf("%d", &id);
+        for(int i = 0; i < total_num; i++) {
+            if (T[i].id == id) {
+                printf("姓名 = %s，学号 = %d，消费金额 = %lf, 消费用途 = %s，消费日期 = %s\n",
+                       T[i].name, T[i].id, T[i].amount, T[i].kind, T[i].date);
             }
-}
-
-void SortByname(Student *s, int n)
-{
-    //按照姓名升序排列
-    int i, j;
-    Student t;
-    for (i = 1;  i < n;  i++)      //n个数，n-1趟排序
-        for (j = 0;  j < n - i;   j++)
-            if (strcmp(s[j].name, s[j+1].name) > 0)
-            {
-                t = s[j];
-                s[j] = s[j + 1];
-                s[j + 1] = t;
-            }
-}
-
-void entry(FILE *fp) //用户登录
-{
-    int count = 0;
-    char name[20];
-    char code[20];
-    while (count < 3)
-    {        printf("输入用户名称:");
+        }
+    }else if(t == 2){
+        puts("请输入姓名:");
+        char name[N];
         scanf("%s", name);
-        printf("输入用户密码:");
-        scanf("%s", code);
-        rewind(fp);
-        while (!feof(fp))
-        {
-            fread(&user, sizeof(user), 1, fp);
-            if (strcmp(user.name, name) == 0 && strcmp(user.code, code) == 0 )
-                return;
+        for(int i = 0; i < total_num; i++) {
+            if (strcmp(name, T[i].name) == 0) {
+                printf("姓名 = %s，学号 = %d，消费金额 = %lf, 消费用途 = %s，消费日期 = %s\n",
+                       T[i].name, T[i].id, T[i].amount, T[i].kind, T[i].date);
+            }
         }
-        if (feof(fp))
-            printf("登录失败，用户名称或密码错误!\n");
-        count = count + 1;
-    }
-    if (count >= 3) //超出登录次数，结束运行
-        exit(0);
-}
-
-void enroll(FILE *fp) //用户注册
-{
-    printf("输入用户名称:");
-    scanf("%s", user.name);
-    printf("输入用户密码:");
-    scanf("%s", user.code);
-    fseek(fp, 0, 2);
-    fwrite(&user, sizeof(user), 1, fp);
-    printf("注册成功!\n");
-}
-
-void Login()
-{        int choice;
-    FILE *fp = fopen("users.txt", "at+");
-    while (1)
-    {        printf("\t\t*************************\n");
-        printf("\t\t*      1--登录          *\n");
-        printf("\t\t*      2--注册          *\n");
-        printf("\t\t*      3--结束          *\n");
-        printf("\t\t*************************\n");
-        printf("\t\t    选择菜单序号(1--3):");
-        scanf("%d", &choice);
-        switch (choice)
-        {
-            case  1:
-                entry(fp);
-                return;
-            case  2:
-                enroll(fp);
-                continue;
-            case  3:
-                exit(0);    //结束运行
+    }else if(t == 3){
+        puts("请输入消费用途:");
+        char kind[N];
+        scanf("%s", kind);
+        for(int i = 0; i < total_num; i++) {
+            if (strcmp(kind, T[i].kind) == 0) {
+                printf("姓名 = %s，学号 = %d，消费金额 = %lf, 消费用途 = %s，消费日期 = %s\n",
+                       T[i].name, T[i].id, T[i].amount, T[i].kind, T[i].date);
+            }
         }
     }
+}
+void delete() {
+puts("请输入要删除的学生学号:");
+int id;
+scanf("%d", &id);
+for(int i = 0; i < total_num; i++) {
+if(T[i].id == id) {
+for(int j = i; j < total_num; j++) {
+T[j] = T[j+1];
+}
+total_num--;
+puts("删除成功");
+return;
+}
+}
+puts("修改失败，学号不存在！");
+}
+int max(int a, int b){
+    return a > b?a:b;
+}
+int min(int a, int b) {
+    return a > b?b:a;
+}
+struct S{
+    char name[N];
+    int cnt;
+};
+
+void stat(){
+    struct S kinds[M];
+    puts("*******************");
+    puts("1.按消费用途统计");
+    puts("2.按消费日期统计");
+    puts("*******************");
+    int x;
+    scanf("%d", &x);
+
+    if(x == 1) {
+        int k = 0;
+        for(int i = 0; i < total_num; i++) {
+            int j;
+            for(j = 0; j < k; j++) {
+                if(strcmp(T[i].kind, kinds[j].name) == 0){
+                    kinds[j].cnt++;
+                    break;
+                }
+            }
+            if(j == k){
+                strcpy(kinds[k].name, T[i].kind);
+                kinds[k].cnt = 1;
+                k++;
+            }
+        }
+        // 输出
+        for(int i = 0; i < k; i++) {
+            printf("消费用途 = %s，同类人数 = %d\n", kinds[i].name, kinds[i].cnt);
+        }
+    }else if(x == 2){
+        int k = 0;
+        for(int i = 0; i < total_num; i++) {
+            int j;
+            for(j = 0; j < k; j++) {
+                if(strcmp(T[i].date, kinds[j].name) == 0){
+                    kinds[j].cnt++;
+                    break;
+                }
+            }
+            if(j == k){
+                strcpy(kinds[k].name, T[i].date);
+                kinds[k].cnt = 1;
+                k++;
+            }
+        }
+        // 输出
+        for(int i = 0; i < k; i++) {
+            printf("消费日期 = %s，同类人数 = %d\n", kinds[i].name, kinds[i].cnt);
+        }
+    }
+}
+
+void sort() {
+    puts("*******************");
+    puts("1.按姓名排序");
+    puts("2.按消费金额");
+    puts("*******************");
+    int x;
+    scanf("%d", &x);
+    if(x == 1) {
+        for(int i = 0; i < total_num; i++) {
+            for(int j = 0; j + 1 < total_num; j++) {
+                if(strcmp(T[j].name, T[j+1].name) > 0) {
+                    Student t = T[j];
+                    T[j] = T[j+1];
+                    T[j+1] = t;
+                }
+            }
+        }
+        output();
+    }else if(x == 2){
+        for(int i = 0; i < total_num; i++) {
+            for(int j = 0; j + 1< total_num; j++) {
+                if(T[j].amount > T[j+1].amount) {
+                    Student t = T[j];
+                    T[j] = T[j+1];
+                    T[j+1] = t;
+                }
+            }
+        }
+        output();
+    }
+}
+void save(){
+    int i;
+    FILE *fp = fopen(filename, "w");
+    fwrite(&T, total_num, sizeof(Student), fp);
     fclose(fp);
+    puts("保存成功");
+}
+
+void read(){
+    int i = 0;
+    FILE *fp = fopen(filename, "r");
+    if(fp == NULL){
+        return;
+    }
+    while (!feof(fp))
+    {
+        fread(&T[i], 1, sizeof(Student), fp);
+        i++;
+    }
+    total_num = i - 1;
+    fclose(fp);
+    puts("读取成功");
+}
+int main(){
+    while(1) {
+        menu();
+        puts("请选择:");
+        int m;
+        scanf("%d", &m);
+        switch (m) {
+            case 1: add();break;
+            case 2: output();break;
+            case 3: query();break;
+            case 4: delete();break;
+            case 5: modify();break;
+            case 6: sort();break;
+            case 7: stat();break;
+            case 8: save();break;
+            case 9: read();break;
+            case 0: puts("退出成功");return 0;
+        }
+    }
+
 }
