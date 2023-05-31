@@ -184,7 +184,7 @@ void query() {
         }
     }
 }
-void delete() {
+void delete_() {
     puts("请输入要删除的学生学号:");
     int id;
     scanf("%d", &id);
@@ -327,7 +327,7 @@ int main(){
             case 1: add();break;
             case 2: output();break;
             case 3: query();break;
-            case 4: delete();break;
+            case 4: delete_();break;
             case 5: modify();break;
             case 6: sort();break;
             case 7: stat();break;

@@ -191,7 +191,7 @@ void sort ()
         }
     }
     printf("结果如下:\n");
-    showAll(stu);
+    showAll();
 }
 
 enum command{CMD_QUIT,CMD_ADD,CMD_SHOWALL,CMD_MODIFY,CMD_DEL,CMD_SEARCH,CMD_SORT,CMD_END};
