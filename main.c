@@ -11,7 +11,7 @@ struct stu{
     int id;
     char sex[N];
     int age;
-    char clas[N];
+    char grade[N];
     int math;
     int eng;
     int com;
@@ -53,7 +53,7 @@ void add(){
         puts("请输入年龄:");
         scanf("%d", &t.age);
         puts("请输入班级:");
-        scanf("%s", t.clas);
+        scanf("%s", t.grade);
         puts("请输入学生C语言成绩:");
         scanf("%d", &t.com);
         puts("请输入学生高数成绩:");
@@ -64,7 +64,7 @@ void add(){
         // 判重
         for(int i = 0; i < total_num; i++) {
             if(T[i].id == t.id){
-                puts("添加失败，已存在相同学号。");
+                puts("添加失败,已存在相同学号。");
                 return;
             }
         }
@@ -89,7 +89,7 @@ void output() {
     puts("姓名\t学号\t性别\t年龄\t班级\tC语言成绩\t高数成绩\t英语成绩\t总分\t平均分\n");
     for(int i = 0; i < total_num; i++) {
         printf("%s\t%d\t%s\t%d\t%s\t%d\t%d\t%d\t%d\t%d\n",
-               T[i].name,T[i].id,T[i].sex,T[i].age,T[i].clas,T[i].com,T[i].math,T[i].eng,T[i].sum,T[i].av);
+               T[i].name,T[i].id,T[i].sex,T[i].age,T[i].grade,T[i].com,T[i].math,T[i].eng,T[i].sum,T[i].av);
     }
 }
 
@@ -116,7 +116,7 @@ void modify(){
         }
     }
     if(state == -1){
-        puts("学号不存在，修改失败！");
+        puts("学号不存在,修改失败！");
     }
     if(x == 1){
         puts("请输入修改后的姓名:");
@@ -131,7 +131,7 @@ void modify(){
         scanf("%d", &T[state].age);
     }else if(x == 4){
         puts("请输入修改后的班级:");
-        scanf("%s", T[state].clas);
+        scanf("%s", T[state].grade);
         puts("修改成功!");
     }else if(x == 5){
         puts("请输入修改后的C语言成绩:");
@@ -162,8 +162,8 @@ void query() {
         scanf("%d", &id);
         for(int i = 0; i < total_num; i++) {
             if (T[i].id == id) {
-                printf("姓名 = %s，学号 = %d，性别 = %lf, 年龄 = %d，班级 = %d\n",
-                       T[i].name, T[i].id, T[i].sex, T[i].age, T[i].clas);
+                printf("姓名 = %s,学号 = %d,性别 = %s, 年龄 = %d,班级 = %s\n", 
+                T[i].name, T[i].id, T[i].sex, T[i].age, T[i].grade);
             }
         }
     }else if(t == 2){
@@ -172,8 +172,8 @@ void query() {
         scanf("%s", name);
         for(int i = 0; i < total_num; i++) {
             if (strcmp(name, T[i].name) == 0) {
-                printf("姓名 = %s，学号 = %d，性别 = %lf, 年龄 = %d，班级 = %d\n",
-                       T[i].name, T[i].id, T[i].sex, T[i].age, T[i].clas);
+                printf("姓名 = %s,学号 = %d,性别 = %s, 年龄 = %d,班级 = %s\n",
+                       T[i].name, T[i].id, T[i].sex, T[i].age, T[i].grade);
             }
         }
     }
@@ -192,7 +192,7 @@ void delete_() {
             return;
         }
     }
-    puts("修改失败，学号不存在！");
+    puts("修改失败,学号不存在！");
 }
 
 struct S{
